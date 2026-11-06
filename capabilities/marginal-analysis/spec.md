@@ -183,8 +183,10 @@ The model reports, on the Optimize sheet:
 
 On the MC_Schedule sheet:
 6. MC_C(n) for each crop from 1 to C_CAP, shown next to C_PRICE
-7. Standalone crossing point for each crop: the largest n
-   where MC_C(n) <= C_PRICE
+7. Standalone crossing point for each crop: the last n before
+   MC_C(n) first rises above C_PRICE (the first n where
+   MC_C(n) > C_PRICE, minus 1). If MC_C(n) never rises above
+   C_PRICE, the crossing point is C_CAP.
 
 On the Checks sheet:
 8. TRUE/FALSE for every validation rule, plus an overall pass cell

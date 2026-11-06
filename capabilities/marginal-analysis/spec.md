@@ -3,7 +3,7 @@ type: spec
 capability: marginal-analysis
 engagement: perfect-competition
 date: 2026-11-05
-status: draft
+status: audited
 built_with: "Claude Code, from this file"
 ---
 
@@ -192,3 +192,105 @@ On the Checks sheet:
 8. TRUE/FALSE for every validation rule, plus an overall pass cell
 
 ## Audit findings
+Audited 2026-11-05 against model.xlsx (commit af7aefe). Each finding lists
+what I checked, what I found, what I did, and what the check would catch.
+
+### 1. Hand check: FIELD_HRS_TOM(1)
+- **Checked:** One bed of tomatoes alone, by calculator: 1 × 2.5 × 36 × 1.10.
+- **Found:** Calculator = 99 hrs. MC_Schedule row n = 1 = 99. Checks rule 4 TRUE.
+- **Did:** Nothing needed.
+- **Would catch:** A dropped (1 + DIM_RATE)^n exponent, which makes cost a straight line.
+
+### 2. Spec vs. workbook: standalone crossing definition 
+- **Checked:** Compared my spec's crossing definition (Outputs #7) with the
+  workbook's crossing formula on MC_Schedule.
+- **Found:** My spec said "the largest n where MC_C(n) <= C_PRICE." That gives
+  20 carrots and 30 mesclun, because MC falls back below price after the
+  farmer's 720 field hours run out and the cheaper temp rate takes over. The
+  builder instead used "the last n before MC first rises above price," which
+  gives 10 / 10 / 6 and matches the check figures. The workbook did not follow
+  my spec.
+- **Did:** Corrected Outputs #7 in the spec to "the last n before MC_C(n) first
+  rises above C_PRICE" and committed it. No rebuild needed; the workbook already
+  matched the corrected spec.
+- **Would catch:** A crossing point reported at the wrong bed when MC is not
+  always rising.
+
+### 3. Solver constraints on Mac
+- **Checked:** Entered the Conventions #8 constraints in Excel Solver (Mac),
+  using the named ranges on the Inputs sheet.
+- **Found:** Mac Solver can't reference other sheets. It turned `TOM_CAP`
+  (Inputs!B5) into Optimize!B5, so the constraint became
+  `BEDS_TOM <= BEDS_TOM`. The other limits pointed to empty or TRUE/FALSE cells,
+  and Solver stopped with "Solver encountered an error value in the objective
+  cell or a constraint cell."
+- **Did:** Updated Structure #4 in the spec so Optimize shows each constraint
+  limit as a cell linked to Inputs, committed, and had Claude Code rebuild.
+  The new limits are at Optimize B39:B43 (formulas, not typed numbers). Re-entered
+  the constraints against those cells; Solver then ran.
+- **Would catch:** Solver running against the wrong limits, or not running at all.
+
+### 4. Build defects in the generated workbook
+- **Checked:** Inspected the workbook before running Solver, and had Claude Code
+  count formula cells with no saved value (read-only).
+- **Found:** (a) The decision cells were pre-filled with 10 / 20 / 30. That is
+  the published answer typed in, not a Solver result. (b) 622 formula cells had
+  no saved values, because the file was written by a script and never saved in
+  Excel. (c) The file was saved in the wrong repository (cmingcl.github.io), not
+  beside spec.md.
+- **Did:** Moved the file into capabilities/marginal-analysis/ in the
+  cheungming_chengleever repo, reset the decision cells to 0 / 0 / 0, ran Solver
+  myself, and saved from desktop Excel. A second read-only check found
+  0 formula cells without values (637 formula cells after the rebuild).
+- **Would catch:** A workbook that shows the right answer without having
+  computed it, or that shows blank results to anyone who opens it from GitHub.
+
+### 5. Solver from two starting points
+- **Checked:** Ran Solver (GRG Nonlinear, integer constraints, Integer
+  Optimality 0%) twice: once starting from 0 / 0 / 0 and once from 20 / 0 / 0.
+- **Found:** Both runs ended at BEDS_TOM = 10, BEDS_CAR = 20, BEDS_MES = 30,
+  with PROFIT = $42,762 ($42,761.66 unrounded), TOTAL_BEDS = 60, and
+  TEMP_COUNT = 3.165. All constraint cells on Optimize were TRUE.
+  Run 1 message: "Solver found a solution. All constraints and optimality conditions are satisfied."
+  Run 2 message: "Solver found a solution. All constraints and optimality conditions are satisfied."
+  The two starting points agree, so there is no sign of a local optimum.
+- **Did:** Kept the Solver solution, saved the Solver model on the Optimize
+  sheet at G4, and saved the workbook from desktop Excel.
+- **Would catch:** A local optimum that depends on where Solver starts, which
+  GRG Nonlinear reports with the same confidence as the true best answer.
+
+### 6. Check figures
+- **Checked:** Checks sheet after Solver.
+- **Found:** All [Cell] rules TRUE; overall pass cell TRUE.
+- **Did:** Nothing needed.
+- **Would catch:** Any error that changes the final answer.
+
+### 7. Broke a check on purpose
+- **Checked:** Changed TOM_PRICE from 8800 to 8000.
+- **Found:** Rule 2 (profit) turned FALSE; overall pass FALSE.
+  Changed it back → TRUE again.
+- **Did:** Confirmed the checks actually react.
+- **Would catch:** A check cell that always shows TRUE no matter what.
+
+### 8. Lab cross-check
+- **Checked:** Standalone carrot marginal cost in the workbook (MC_Schedule)
+  vs. the Farm Profit Lab's Carrots chart. The lab shows a chart, not exact
+  values, so lab figures are read from the chart.
+- **Found:** Bed 5 MC: workbook $1734 ; lab ≈ $1730 (read from chart).
+  Lab shows P ≈ MC at 10 beds; workbook carrot crossing = 10.
+  Lab MC drops sharply after bed 16 and stays below P, the same late dip
+  found in finding #2.
+- **Did:** Nothing needed; the two implementations agree within chart-reading
+  precision.
+- **Would catch:** An error in the middle of the model that the final check
+  figures might not reveal.
+
+### 9. Structural checks [Manual]
+- **Checked:** Clicked through calculated cells on every sheet; searched for "#".
+- **Found:** All calculated cells are formulas; no error cells.
+- **Did:** Nothing needed.
+- **Would catch:** Pasted numbers that go stale when an input changes.
+
+### 10. Note for Stage 3
+- Tomatoes MC dips at bed 6 before rising again. Not explained here.
+

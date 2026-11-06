@@ -58,8 +58,7 @@ The workbook has five sheets:
    bed in USD for comparison.
 4. **Optimize** — the three decision cells (beds of tomatoes, carrots,
    mesclun) that Solver changes, the profit cell it maximizes, and one
-   check cell per constraint showing TRUE/FALSE.
-   Optimize also shows each constraint limit (TOM_CAP, CAR_CAP, MES_CAP, BEDS_AVAIL, TEMP_MAX) as cells linked to the Inputs sheet, because Excel Solver on Mac cannot reference cells on other sheets.
+   check cell per constraint showing TRUE/FALSE. Optimize also shows each constraint limit (TOM_CAP, CAR_CAP, MES_CAP, BEDS_AVAIL, TEMP_MAX) as cells linked to the Inputs sheet, because Excel Solver on Mac cannot reference cells on other sheets.
 6. **Checks** — each [Cell] validation rule as a TRUE/FALSE cell using
    ABS(model − target) <= tolerance, plus a summary cell that is TRUE only
    if every check passes.

@@ -4,7 +4,7 @@ capability: marginal-analysis
 engagement: perfect-competition
 date: 2026-11-05
 status: draft
-built_with: ""
+built_with: "Claude Code, from this file"
 ---
 
 # Marginal analysis — model specification

@@ -27,3 +27,7 @@ started: 2026-10-02
 - 2026-11-05 — Claude Code pre-filled the decision cells with the published
   answer (10/20/30) and saved the workbook in the wrong repo. Caught before
   running Solver; fixed.
+
+## Reflection
+AI really helped me in double-checking my work. I would first complete the work myself, then plug my results or whatever I had written into Claude (web) to double-check. It found a lot of errors and spaces for improvement. 
+  

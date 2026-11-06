@@ -14,3 +14,8 @@ started: 2026-10-02
 | 2026-11-05 | Claude (web) | asked for a final review of the full spec | got a few small consistency fixes; Claude also said its own calculation at 10/20/30 using my formulas comes to about $42,762 | made the fixes; will confirm the profit in my own audit, not rely on Claude's number |
 | 2026-11-05 | Claude (code) | gave Claude my committed spec.md as-is and asked: "Build model.xlsx exactly as specified in this file. Use the names in the spec as Excel named ranges. Every calculated cell must be a formula. Do not change or add to the spec. If something in the spec is unclear, ask me instead of guessing." | got model.xlsx with [five sheets: Inputs, Costs, MC_Schedule, Optimize, Checks] | opened in desktop Excel and checked the names and formulas |
 | 2026-11-05 | Claude (web) | gave Claude my committed spec as-is and asked it to build model.xlsx | got a 5-sheet workbook with named ranges; but decision cells were pre-filled with 10/20/30, the file had no saved values, and the crossing formula didn't follow my spec | ran Solver myself from 0/0/0 and 20/0/0; fixed the crossing definition in the spec |
+
+## Errors Caught
+   - 2026-11-05 — Claude suggested "largest n where MC ≤ price" as the crossing
+     definition. It fails for carrots and mesclun because MC dips below price again
+     after farmer hours run out. Corrected the spec.

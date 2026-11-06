@@ -11,3 +11,5 @@ plant to maximize season profit, given field labor hours, the 64-bed total, the 
 - `model.xlsx` — the workbook built from the spec (Solver solution kept)
 
 Exercised in: Perfect Competition case, Stage 2 (2026-11-05)
+
+Exercised in: Perfect Competition case, Stages 2–3 (2026-11-06)
